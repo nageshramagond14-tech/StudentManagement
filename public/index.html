@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium Student Management Dashboard for EduAdmin. Manage students, view analytics, and track courses.">
+    <title>EduAdmin | Modern Student Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduAdmin</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="#"><i class="fas fa-user-graduate"></i> Students</a>
+                <a href="#"><i class="fas fa-book-open"></i> Courses</a>
+                <a href="#"><i class="fas fa-chart-pie"></i> Reports</a>
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff" alt="User">
+                    <div class="user-text">
+                        <p class="name">Nagesh r</p>
+                        <p class="role">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search students by name...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn-primary" id="addStudentBtn"><i class="fas fa-plus"></i> Add Student</button>
+                    <div class="notifications-bell">
+                        <i class="far fa-bell"></i>
+                        <span class="bell-badge"></span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-stats">
+                    <div class="stat-card fade-in">
+                        <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>Total Students</h3>
+                            <p id="totalStudents">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay: 0.1s">
+                        <div class="stat-icon emerald"><i class="fas fa-award"></i></div>
+                        <div class="stat-info">
+                            <h3>Top Course</h3>
+                            <p id="topCourse">N/A</p>
+                        </div>
+                    </div>
+                    <div class="stat-card fade-in" style="animation-delay: 0.2s">
+                        <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+                        <div class="stat-info">
+                            <h3>Active Courses</h3>
+                            <p id="activeCourses">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-section fade-in" style="animation-delay: 0.3s">
+                    <div class="section-header">
+                        <h2>Course Distribution</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="courseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <section class="data-section fade-in" style="animation-delay: 0.4s">
+                <div class="section-header">
+                    <h2>Recent Students</h2>
+                    <div class="view-actions">
+                        <button class="btn-icon active"><i class="fas fa-list"></i></button>
+                        <button class="btn-icon"><i class="fas fa-th"></i></button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="studentTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Course</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentBody">
+                            <!-- Skeleton loaders will be here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextBtn" disabled><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Student Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content glass panel-slide-up">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Student</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="studentForm">
+                <input type="hidden" id="studentId">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required placeholder="e.g. John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" required min="1" placeholder="e.g. 20">
+                </div>
+                <div class="form-group">
+                    <label for="course">Course</label>
+                    <input type="text" id="course" required placeholder="e.g. Computer Science">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content glass panel-slide-up delete-confirm">
+            <div class="delete-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h2>Are you sure?</h2>
+            <p>This action cannot be undone. This student will be permanently removed from the system.</p>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn">Delete Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="js/client.js"></script>
+</body>
+</html>
